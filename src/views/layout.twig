@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="oldie ie6" lang="en"><![endif]-->
+<!--[if IE 7 ]><html class="oldie ie7" lang="en"><![endif]-->
+<!--[if IE 8 ]><html class="oldie ie8" lang="en"><![endif]-->
+<!--[if IE 9 ]><html class="ie9" lang="en"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html lang="en"><!--<![endif]-->
+<head>
+
+	<title>{{ pageTitle|raw }}</title>
+
+	<meta charset="UTF-8" />
+
+	<!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+	<link rel="stylesheet" media="screen" href="{{ app.request.baseUrl }}/css/reset.css" />
+	<link rel="stylesheet" media="screen" href="{{ app.request.baseUrl }}/css/screen.css" />
+</head>
+<body>
+    
+    <div id="siteWrapper" class="clearfix">
+
+        <header id="small" class="clearfix">
+            <h1><a href="/">MailClient</a></h1>
+        </header>
+
+        <!-- content -->
+        <section id="{{ contentId }}" class="clearfix">
+                {% block pageContent %}
+
+                {% endblock %}
+        </section>
+
+        <footer>
+            <section class="center">
+                &copy; 2013 &mdash; <a href="mailto:jasper.vankerschaver@kahosl.be">jasper.vankerschaver@kahosl.be</a>
+            </section>
+        </footer>
+
+    </div>
+    <script type="text/javascript" src="{{ app.request.baseUrl }}/js/jquery-1.9.1.min.js"></script>
+</body>
+</html>

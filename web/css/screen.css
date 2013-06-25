@@ -1,0 +1,108 @@
+/**
+ * Stylesheet for Dieetopvolging.be
+ *
+ * @media	screen, projection
+ * @author	Jasper Van Kerschaver <jasper.vankerschaver@kahosl.be>
+ */
+
+/**
+* CSS Clearfix
+* @see http://www.positioniseverything.net/easyclearing.html
+*/
+.clearfix:after {
+        content: ".";
+        display: block;
+        height: 0;
+        clear: both;
+        visibility: hidden;
+}
+
+.ie6 .clearfix {
+        display: inline-block;
+}
+
+.ie7 .clearfix {
+        zoom: 1;
+}
+
+/**
+* General Page Structure
+*/
+
+html {  
+}
+
+html, body {
+        height: 100%;
+}
+
+body {
+    font-family: "Segoe UI", sans-serif;
+    font-weight: 300;
+    color: #333;
+    font-size: 12px;
+    line-height: 1;
+    width: 100%;
+    font-weight: 100;
+    background: url('../img/back8.jpg') no-repeat fixed center center / cover transparent;
+}
+
+section.center {
+    min-width: 35.5em; 
+}
+
+input, textarea, select {
+    font-family: "Segoe UI";
+    font-size: 1.230769230769231em;
+    line-height: 1.538461538461538em;
+}
+
+
+input[type=submit] {
+    background-color: #71d01c;
+    border: 0 none;
+    color: white;
+    font-family: "Segoe UI";
+    font-size: 1.230769230769231em;
+    min-width: 6em;
+    padding: 3px 12px 5px;
+}
+
+input[type=submit]:hover {
+    background-color: #ddd;
+    color: #333;
+    cursor: pointer;
+}
+
+.error {
+    margin-bottom: 1em;
+    color: white;
+    background: url('../img/icons/error.png') no-repeat;
+    float: left;
+    width: 100%;
+    line-height: 2.181818181818182em;
+    padding-left: 2.727272727272727em;
+}
+
+ul#menu {
+    float: left;
+    width: 100%;
+}
+
+a {
+    color: #009ACD;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #00688B;
+}
+
+h2 {
+    font-size: 1.6em;
+    font-weight: 100;
+    margin-bottom: 0.8em;
+    color: #333;
+}
+
+/*EOF*/
