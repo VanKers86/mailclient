@@ -19,11 +19,11 @@ class MainController implements ControllerProviderInterface {
 		$controllers = $app['controllers_factory'];
 
 		// Bind sub-routes
-                $controllers->get('/', array($this, 'loginGet'));
-                $controllers->post('/', array($this, 'loginPost'));
-                $controllers->get('/login', array($this, 'loginGet'));
-                $controllers->post('/login', array($this, 'loginPost'));
-                $controllers->get('/inbox', array($this, 'inbox'));
+                $controllers->get('/', array($this, 'loginGet'))->requireHttps();
+                $controllers->post('/', array($this, 'loginPost'))->requireHttps();
+                $controllers->get('/login', array($this, 'loginGet'))->requireHttps();
+                $controllers->post('/login', array($this, 'loginPost'))->requireHttps();
+                $controllers->get('/inbox', array($this, 'inbox'))->requireHttps();
                 
 		return $controllers;
 
