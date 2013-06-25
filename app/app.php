@@ -12,5 +12,4 @@ $app->error(function (Exception $e, $code) {
 });
 
 // Mount our ControllerProviders
-$app->mount('/', new Ikdoeict\Provider\Controller\LoginController());
-$app->mount('/inbox', new Ikdoeict\Provider\Controller\InboxController());
+$app->mount('/', new Ikdoeict\Provider\Controller\MainController());
