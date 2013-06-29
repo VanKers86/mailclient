@@ -76,8 +76,7 @@ input[type=submit]:hover {
 
 .error {
     margin-bottom: 1em;
-    color: white;
-    background: url('../img/icons/error.png') no-repeat;
+    color: red;
     float: left;
     width: 100%;
     line-height: 2.181818181818182em;

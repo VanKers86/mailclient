@@ -6,5 +6,13 @@
 {% set contentId = 'Login' %}
 
 {% block pageContent %}
-    <h1>Login</h1>
+        <h1>Login</h1>
+        <form id="login" class="blue clearfix" action="#" method="post">
+            {{ form_widget(form) }}
+            <input type="submit" name="submit" value="Login"/>
+            {% if error is defined %}
+            <p class="error">{{ error }}</p>
+            {% endif %}
+        </form>
+
 {% endblock %}

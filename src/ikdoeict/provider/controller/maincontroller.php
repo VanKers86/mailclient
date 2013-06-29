@@ -4,14 +4,14 @@ namespace Ikdoeict\Provider\Controller;
 
 use Silex\Application;
 use Silex\ControllerProviderInterface;
-use Silex\ControllerCollection;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Request as Request;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
+
 
 class MainController implements ControllerProviderInterface {
 
-        // '/dietician' controller, functionality and different paths
+        private $inbox;
+    
+        // default controller, functionality and different paths
 	public function connect(Application $app) {
 
 		//@note $app['controllers_factory'] is a factory that returns a new instance of ControllerCollection when used.
@@ -21,30 +21,80 @@ class MainController implements ControllerProviderInterface {
 		// Bind sub-routes
                 $controllers->get('/', array($this, 'loginGet'))->requireHttps();
                 $controllers->post('/', array($this, 'loginPost'))->requireHttps();
-                $controllers->get('/login', array($this, 'loginGet'))->requireHttps();
-                $controllers->post('/login', array($this, 'loginPost'))->requireHttps();
-                $controllers->get('/inbox', array($this, 'inbox'))->requireHttps();
                 
 		return $controllers;
 
 	}
 
-        //Login GET page
-        public function loginGet(Application $app, Request $request) {
+        //Login GET
+        public function loginGet(Application $app) {
+            $form = $app['form.factory']->createBuilder('form')
+                ->add('Email', 'email', array('label' => 'Email *'))
+                ->add('Password', 'password', array('label' => 'Password *'))
+                ->add('Server', 'text', array('label' => 'Server address (my.domain.com) *'))
+                ->add('Port', 'integer', array('label' => 'TCP Port Number', 'required' => false))
+                ->add('SSL', 'checkbox', array('label' => 'SSL (Secure Socket Layer)', 'required' => false, 'attr' => array('checked' => 'checked')))
+                ->add('ValidateCert', 'checkbox', array('label' => 'Validate Certificates', 'required' => false, 'attr' => array('checked' => 'checked')))
+                ->add('Service', 'choice', array(
+                    'choices' => array('imap' => 'imap', 'pop3' => 'pop3', 'nntp' => 'nntp'),
+                    'empty_value' => false
+                ))
+                ->getForm();
 
-            return $app['twig']->render('login.twig');
+            return $app['twig']->render('login.twig', array('form' => $form->createView()));
         }
 
-        //Login POST page
-        public function loginPost(Application $app, Request $request) {
+        //Login POST
+        public function loginPost(Application $app, Request $request) {        
+            
+            $form = $app['form.factory']->createBuilder('form')
+                ->add('Email', 'email', array('label' => 'Email *'))
+                ->add('Password', 'password', array('label' => 'Password *'))
+                ->add('Server', 'text', array('label' => 'Server address (my.domain.com) *'))
+                ->add('Port', 'integer', array('label' => 'TCP Port Number', 'required' => false))
+                ->add('SSL', 'checkbox', array('label' => 'SSL (Secure Socket Layer)', 'required' => false, 'attr' => array('checked' => 'checked')))
+                ->add('ValidateCert', 'checkbox', array('label' => 'Validate Certificates', 'required' => false, 'attr' => array('checked' => 'checked')))
+                ->add('Service', 'choice', array(
+                    'choices' => array('imap' => 'imap', 'pop3' => 'pop3', 'nntp' => 'nntp'),
+                    'empty_value' => false
+                ))
+                ->getForm();
+            
+            $form->bind($request);
+            
+            if ($form->isValid()) {
+                $formData = $form->getData();
+                
+                //Connection succesfull          
+                if ($this->checkInbox($app, $formData)) {
+                    var_dump($app['mail.checker']->inbox);
 
-            return $app['twig']->render('login.twig');
+                    return $app['twig']->render('inbox.twig');
+                }
+                //Connection failed
+                else {
+                    $error = 'Could not make connection to this mail client, try using different settings';
+                    return $app['twig']->render('login.twig', array('form' => $form->createView(), 'error' => $error));   
+                } 
+
+            }
+            else {
+                $error = 'Please fill in the required fields';
+                return $app['twig']->render('login.twig', array('form' => $form->createView(), 'error' => $error)); 
+            }
         }
         
-        //Inbox page
-        public function inbox(Application $app, Request $request) {
-
-            return $app['twig']->render('inbox.twig');
-        }   
+        public function checkInbox(Application $app, $formData) {
+            $email = $formData['Email'];
+            $passw = $formData['Password'];
+            $server = $formData['Server'];
+            $port = $formData['Port'];
+            $ssl = $formData['SSL'];
+            $valCert = $formData['ValidateCert'];
+            $service = $formData['Service'];
+            $check = $app['mail.checker']->check($email, $passw, $server, $port, $ssl, $valCert, $service);
+            return $check;
+        }
+         
 
 }
