@@ -7,4 +7,22 @@
 
 {% block pageContent %}
     <h1>Inbox</h1>
+    <ul id="mails">
+        <li>
+            <ul class="header">
+                <li class="from">From</li>
+                <li class="subject">Subject</li>
+                <li class="received">Received</li>
+            </ul>
+        </li>
+    {% for mail in mails %}
+        <li>
+            <ul class="mail">
+                <li class="from">{{ mail.from }}</li>
+                <li class="subject">{{ mail.subject }}</li>
+                <li class="received">{{ mail.udate }}</li>
+            </ul>
+        </li>
+    {% endfor %}
+    <ul>
 {% endblock %}

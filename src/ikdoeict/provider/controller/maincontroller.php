@@ -67,9 +67,9 @@ class MainController implements ControllerProviderInterface {
                 
                 //Connection succesfull          
                 if ($this->checkInbox($app, $formData)) {
-                    var_dump($app['mail.checker']->inbox);
-
-                    return $app['twig']->render('inbox.twig');
+                    $mails = $app['mail.checker']->inbox;
+                    var_dump($mails);
+                    return $app['twig']->render('inbox.twig', array('mails' => $mails));
                 }
                 //Connection failed
                 else {
