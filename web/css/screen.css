@@ -47,14 +47,24 @@ body {
     background: url('../img/back8.jpg') no-repeat fixed center center / cover transparent;
 }
 
-section.center {
-    min-width: 35.5em; 
+div#siteWrapper {
+    max-width: 1024px;
+    margin: 0 auto;
+}
+
+.center {
+    margin: 0 auto;
+}
+
+footer {
+    margin-top: 2em;
+    text-align: center;
 }
 
 input, textarea, select {
     font-family: "Segoe UI";
-    font-size: 1.230769230769231em;
-    line-height: 1.538461538461538em;
+    font-size: 1.130769230769231em;
+    line-height: 1.238461538461538em;
 }
 
 
@@ -80,7 +90,6 @@ input[type=submit]:hover {
     float: left;
     width: 100%;
     line-height: 2.181818181818182em;
-    padding-left: 2.727272727272727em;
 }
 
 ul#menu {
@@ -97,11 +106,73 @@ a:hover {
     color: #00688B;
 }
 
-h2 {
-    font-size: 1.6em;
+header {
+    margin-top: 1em;
+}
+
+header h1 {
+    font-size: 3em;
     font-weight: 100;
     margin-bottom: 0.8em;
     color: #333;
+}
+
+section h1 {
+    font-size: 2em;
+    font-weight: 100;
+    margin-bottom: 0.8em;
+    color: #333;    
+}
+
+ul#mails {
+    float: left;
+    width: 100%;
+}
+
+ul#mails ul#header {
+    border-bottom: 1px solid grey;
+    font-weight: bold;
+}
+
+ul#mails li {
+    float: left;
+    width: 100%;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+ul#mails ul {
+    width: 100%;
+    float: left;
+}
+
+ul#mails li.from {
+    width: 45%;
+}
+
+ul#mails li.subject {
+    width: 45%;
+}
+
+ul#mails li.received {
+    width: 10%;
+}
+
+div#form {
+    float: left;
+    width: 100%;
+    font-size: 1.2em;
+}
+
+div#form div {
+    float: left;
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+div#form div label {
+    float: left;
+    width: 100%;
 }
 
 /*EOF*/
