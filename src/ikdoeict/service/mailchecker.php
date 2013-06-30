@@ -6,7 +6,6 @@ use Silex\ServiceProviderInterface;
 
 class MailChecker implements ServiceProviderInterface {
 
-    public $inbox;
     private $connection;
     public $msgCount;
     public $mailsPerPage = 10;
@@ -17,14 +16,14 @@ class MailChecker implements ServiceProviderInterface {
     // Define shared service
     function register(Application $app) {
         $app['mail.checker'] = $app->share(function() {
-                $mc = new MailChecker();
-                $mc->inbox = null;
-                return $mc;
+                return new MailChecker();
         });
     }
 
     //Check given email and password
-    public function check($email, $passw, $server, $port, $ssl, $valCert, $service) {
+    //Returns true when connection was succesfull (session variables set)
+    //Returns false when connection could not be established
+    public function check($app, $email, $passw, $server, $port, $ssl, $valCert, $service) {
         $connString = '{';
         $connString .= $server;
         $port != null ? $connString .= ':' . $port : null;
@@ -36,8 +35,9 @@ class MailChecker implements ServiceProviderInterface {
         $this->connection = @imap_open($connString, $email, $passw);
 
         if (!imap_errors()) {
-            $this->msgCount = imap_num_msg($this->connection);
-            $this->getMails(1);           
+            $app['session']->set('connString', $connString);
+            $app['session']->set('email', $email);
+            $app['session']->set('passw', $passw);
             return true;
         }
         else {
@@ -45,10 +45,30 @@ class MailChecker implements ServiceProviderInterface {
         }
     }
     
-    public function getMails($pageNr) {
+    //Get mails by a page number
+    //Returns number of mails for a certain page, or false when no connection could be established
+    public function getMails($app, $pageNr) {
+        //Connection not set?
+        //Use session variables to establish new one
+        if ($this->connection == null) {
+            $this->connection = @imap_open($app['session']->get('connString'), $app['session']->get('email'), $app['session']->get('passw'));
+            //Still no connection? return false
+            if (!$this->connection) {
+                return false;
+            }
+        }
+        
+        $this->msgCount = @imap_num_msg($this->connection);
         $start = $this->msgCount - (($pageNr - 1) * $this->mailsPerPage);
         $end = $this->msgCount - ($pageNr * $this->mailsPerPage) + 1;
-        $this->inbox = array_reverse(imap_fetch_overview($this->connection, $start . ":" . $end, 0));
+        return @array_reverse(@imap_fetch_overview($this->connection, $start . ":" . $end, 0));
+    }
+    
+    //Destroy session variables when logged out
+    public function logout($app) {
+        $app['session']->remove('connString');
+        $app['session']->remove('email');
+        $app['session']->remove('passw');
     }
 
 }

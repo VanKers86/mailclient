@@ -20,14 +20,22 @@ class MainController implements ControllerProviderInterface {
 
 		// Bind sub-routes
                 $controllers->get('/', array($this, 'loginGet'))->requireHttps();
+                $controllers->get('/login', array($this, 'loginGet'))->requireHttps();
                 $controllers->post('/', array($this, 'loginPost'))->requireHttps();
-                
+                $controllers->post('/login', array($this, 'loginPost'))->requireHttps();
+                $controllers->get('/inbox/{pageNr}', array($this, 'inbox'))->assert('pageNr', '\d+')->requireHttps();
+                $controllers->get('/inbox/', array($this, 'inboxInitial'))->requireHttps();
+                $controllers->get('/inbox/logout', array($this, 'logout'))->requireHttps();
+
 		return $controllers;
 
 	}
 
         //Login GET
         public function loginGet(Application $app) {
+            if ($app['session']->get('logged')) {
+                return $app->redirect('inbox');
+            }                
             $form = $app['form.factory']->createBuilder('form')
                 ->add('Email', 'email', array('label' => 'Email *'))
                 ->add('Password', 'password', array('label' => 'Password *'))
@@ -45,8 +53,10 @@ class MainController implements ControllerProviderInterface {
         }
 
         //Login POST
-        public function loginPost(Application $app, Request $request) {        
-            
+        public function loginPost(Application $app, Request $request) {
+            if ($app['session']->get('logged')) {
+                return $app->redirect('inbox');
+            }
             $form = $app['form.factory']->createBuilder('form')
                 ->add('Email', 'email', array('label' => 'Email *'))
                 ->add('Password', 'password', array('label' => 'Password *'))
@@ -65,10 +75,12 @@ class MainController implements ControllerProviderInterface {
             if ($form->isValid()) {
                 $formData = $form->getData();
                 
-                //Connection succesfull          
-                if ($this->checkInbox($app, $formData)) {
-                    $mails = $app['mail.checker']->inbox;
-                    return $app['twig']->render('inbox.twig', array('mails' => $mails));
+                $check = $this->checkInbox($app, $formData);
+                
+                //Connection succesfull
+                if ($check) {
+                    $app['session']->set('logged', true);
+                    return $app->redirect('inbox');
                 }
                 //Connection failed
                 else {
@@ -83,6 +95,9 @@ class MainController implements ControllerProviderInterface {
             }
         }
         
+        //Check inbox function
+        //Uses the mail.checker service to establish a connection
+        //Returns valid connection string or false
         public function checkInbox(Application $app, $formData) {
             $email = $formData['Email'];
             $passw = $formData['Password'];
@@ -91,8 +106,37 @@ class MainController implements ControllerProviderInterface {
             $ssl = $formData['SSL'];
             $valCert = $formData['ValidateCert'];
             $service = $formData['Service'];
-            $check = $app['mail.checker']->check($email, $passw, $server, $port, $ssl, $valCert, $service);
+            $check = $app['mail.checker']->check($app, $email, $passw, $server, $port, $ssl, $valCert, $service);
             return $check;
+        }
+        
+        //Inbox page
+        //Shows emails by page number
+        public function inbox(Application $app, $pageNr) {
+            if (!$app['session']->get('logged')) {
+                return $app->redirect('../login');
+            }            
+            $mails = $app['mail.checker']->getMails($app, $pageNr);
+            if (!$mails) {
+                return $app->redirect('logout');
+            }
+            return $app['twig']->render('inbox.twig', array('mails' => $mails));
+        }
+        
+        //Initial inbox page
+        //Redirects to inbox with page 1
+        public function inboxInitial(Application $app) {
+            if (!$app['session']->get('logged')) {
+                return $app->redirect('../login');
+            }
+            return $app->redirect('1');
+        }
+        
+        //Logout functionality
+        public function logout(Application $app) {
+            $app['session']->remove('logged');
+            $app['mail.checker']->logout($app);
+            return $app->redirect('../login');
         }
          
 

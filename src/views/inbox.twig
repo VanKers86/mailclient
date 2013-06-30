@@ -7,6 +7,7 @@
 
 {% block pageContent %}
     <h1>Inbox</h1>
+    <a href="logout" title="Logout">Logout</a>
     <ul id="mails">
         <li>
             <ul id="header">
@@ -20,7 +21,7 @@
             <ul class="mail">
                 <li class="from">{{ mail.from }}</li>
                 <li class="subject">{{ mail.subject }}</li>
-                <li class="received">{{ mail.udate }}</li>
+                <li class="received">{{ mail.date|date("m/d/Y H:M") }}</li>
             </ul>
         </li>
     {% endfor %}
