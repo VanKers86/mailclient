@@ -6,8 +6,22 @@
 {% set contentId = 'Inbox' %}
 
 {% block pageContent %}
-    <h1>Inbox</h1>
-    <a href="logout" title="Logout">Logout</a>
+    <a id="logout" href="logout" title="Logout">Logout</a>
+
+    <h1>Inbox ({{ nrMails }})</h1>
+    <div id="paging">
+        <p>
+        {% if currentPage != 1 %}
+        <a href="1">First</a>
+        <a href="{{ currentPage - 1 }}">Previous</a>    
+        {% endif %}
+        {{ currentPage }} ({{ mailsPerPage * (currentPage - 1) + 1}} - {{ mailsPerPage * currentPage }})
+        {% if currentPage != nrPages %}
+        <a href="{{ currentPage + 1 }}">Next</a>    
+        <a href="{{ nrPages }}">Last</a>
+        {% endif %}
+        </p>   
+    </div>
     <ul id="mails">
         <li>
             <ul id="header">
@@ -21,7 +35,7 @@
             <ul class="mail">
                 <li class="from">{{ mail.from }}</li>
                 <li class="subject">{{ mail.subject }}</li>
-                <li class="received">{{ mail.date|date("m/d/Y H:M") }}</li>
+                <li class="received">{{ mail.date|date("m/d/Y H:i", "Europe/Paris") }}</li>
             </ul>
         </li>
     {% endfor %}

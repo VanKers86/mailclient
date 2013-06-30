@@ -120,7 +120,14 @@ class MainController implements ControllerProviderInterface {
             if (!$mails) {
                 return $app->redirect('logout');
             }
-            return $app['twig']->render('inbox.twig', array('mails' => $mails));
+            $nrPages = $app['mail.checker']->nrPages;
+            $nrMails = $app['mail.checker']->msgCount;
+            $mailsPerPage = $app['mail.checker']->mailsPerPage;
+            return $app['twig']->render('inbox.twig', array('mails' => $mails, 
+                                                            'nrPages' => $nrPages, 
+                                                            'nrMails' => $nrMails, 
+                                                            'currentPage' => $pageNr,
+                                                            'mailsPerPage' => $mailsPerPage));
         }
         
         //Initial inbox page

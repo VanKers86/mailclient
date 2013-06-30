@@ -8,7 +8,8 @@ class MailChecker implements ServiceProviderInterface {
 
     private $connection;
     public $msgCount;
-    public $mailsPerPage = 10;
+    public $mailsPerPage = 20;
+    public $nrPages;
     
     function boot(Application $app) {
     }
@@ -57,8 +58,8 @@ class MailChecker implements ServiceProviderInterface {
                 return false;
             }
         }
-        
         $this->msgCount = @imap_num_msg($this->connection);
+        $this->nrPages = ceil($this->msgCount / $this->mailsPerPage);
         $start = $this->msgCount - (($pageNr - 1) * $this->mailsPerPage);
         $end = $this->msgCount - ($pageNr * $this->mailsPerPage) + 1;
         return @array_reverse(@imap_fetch_overview($this->connection, $start . ":" . $end, 0));
